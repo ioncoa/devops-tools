@@ -112,7 +112,7 @@ services:
     command:
     - --config.file=/etc/blackbox/blackbox.yml
     volumes:
-    - ./blackbox/blackbox.yml:/etc/blackbox/blackbox.yml
+    - ./blackbox/blackbox.yaml:/etc/blackbox/blackbox.yml
     depends_on:
     - prometheus
     networks:
