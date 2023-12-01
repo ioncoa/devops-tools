@@ -9,6 +9,7 @@ networks:
 # will contain all elasticsearch data.
 volumes:
   elasticsearch-data:
+  logstash-data:
 
 secrets:
   elasticsearch.keystore:
@@ -84,6 +85,7 @@ services:
         ELK_VERSION: $ELK_VERSION
     restart: unless-stopped
     volumes:
+      - logstash-data:/usr/share/logstash/data
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./logstash/config/pipelines.yml:/usr/share/logstash/config/pipelines.yml:ro
       - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
