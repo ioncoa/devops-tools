@@ -1,13 +1,13 @@
 # my global config
 global:
-  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  scrape_interval:     30s # By default, scrape targets every 15 seconds.
   evaluation_interval: 15s # By default, scrape targets every 15 seconds.
   # scrape_timeout is set to the global default (10s).
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
-      monitor: 'my-project'
+      monitor: 'ProjectA'
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
@@ -29,25 +29,58 @@ scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
 
   - job_name: 'prometheus'
-
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 15s
-
     static_configs:
          - targets: ['localhost:9090']
 
-  - job_name: 'cadvisor'
+  # - job_name: 'cadvisor'
+  #   # Override the global default and scrape targets from this job every 5 seconds.
+  #   scrape_interval: 15s
+  #   static_configs:
+  #     - targets: ['cadvisor:8080']
 
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 15s
 
+  - job_name: synthetics
+    scrape_interval: 30s
+    metrics_path: /probe
+    params:
+      module:
+          - http_2xx
     static_configs:
-      - targets: ['cadvisor:8080']
-
-  - job_name: 'node-exporter'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 15s
-  
+      - targets:
+          - https://web-address.com
+        labels:
+          env: prod
+          project: gdsterminal
+        relabel_configs:
+          - source_labels:
+              - __address__
+            target_label: name
+          - target_label: __address__
+            replacement: blackbox:9115
+  - job_name: node
+    scrape_interval: 30s
     static_configs:
-      - targets: ['node-exporter:9100']
+      - targets:
+          - x.x.x.x:9121
+          - x.x.x.x:9121
+          - node-exporter:9100
+        labels:
+          env: prod
+    relabel_configs:
+      - source_labels:
+          - __address__
+        target_label: name
+  - job_name: redis
+    scrape_interval: 30s
+    static_configs:
+      - targets:
+          - x.x.x.x:9121
+          - x.x.x.x:9121
+        labels:
+          env: prod
+    relabel_configs:
+      - source_labels:
+          - __address__
+        target_label: name
